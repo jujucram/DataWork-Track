@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Passer Pro - DataWork Track</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="upgrade-page">
+      <div class="upgrade-layout">
+        <section class="upgrade-card">
+          <div class="hero-badge">DataWork Agency</div>
+
+          <h1 class="upgrade-title">Passez au plan Pro</h1>
+
+          <p class="upgrade-subtitle">
+            Débloquez les commandes illimitées et continuez à gérer votre activité
+            avec une expérience plus fluide, plus sérieuse et plus rentable.
+          </p>
+
+          <div class="plan-box">
+            <h2>DataWork Track Pro</h2>
+            <div class="plan-price">2 000 FCFA / mois</div>
+
+            <div class="feature-list">
+              <div>Commandes illimitées</div>
+              <div>Export des données</div>
+              <div>Suivi plus professionnel</div>
+              <div>Activation rapide après vérification</div>
+            </div>
+          </div>
+
+          <div class="payment-box">
+            <h3>Paiement Mobile Money</h3>
+            <p>Effectuez votre paiement au numéro suivant :</p>
+
+            <div class="payment-number">+237 673 35 54 68</div>
+
+            <p><strong>Montant :</strong> 2 000 FCFA</p>
+            <p><strong>Nom :</strong> MOUKAM WETOMDIO BRANDON</p>
+
+            <p class="payment-note">
+              Après paiement, ajoutez le numéro ayant payé et la capture d’écran
+              de la transaction pour envoyer votre demande d’activation.
+            </p>
+          </div>
+        </section>
+
+        <aside class="upgrade-side">
+          <h3 style="font-size: 26px; margin-bottom: 14px; color: #0f172a;">
+            Envoyer la preuve de paiement
+          </h3>
+
+          <div class="step-list">
+            <div class="step-item">
+              <strong>1. Faites le paiement</strong>
+              <p>Payer 2 000 FCFA au numéro Mobile Money affiché à gauche.</p>
+            </div>
+
+            <div class="step-item">
+              <strong>2. Ajoutez la preuve</strong>
+              <p>Chargez une capture claire de votre transaction.</p>
+            </div>
+
+            <div class="step-item">
+              <strong>3. Envoyez la demande</strong>
+              <p>Votre demande sera marquée en attente de validation.</p>
+            </div>
+          </div>
+
+          <div class="order-form" style="margin-top: 22px;">
+            <div class="form-group">
+              <label for="payerPhone">Numéro ayant effectué le paiement</label>
+              <input
+                type="text"
+                id="payerPhone"
+                placeholder="Ex: 673355468"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="proofFile">Capture d’écran du paiement</label>
+              <input type="file" id="proofFile" accept="image/*" />
+            </div>
+
+            <div class="cta-stack">
+              <button id="submitPaymentBtn" class="whatsapp-btn-large">
+                J’ai payé, envoyer la preuve
+              </button>
+
+              <button id="backToAppBtn" class="back-btn">
+                Retour à l’application
+              </button>
+            </div>
+
+            <p id="upgradeMessage" class="success-message"></p>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="upgrade.js"></script>
+  </body>
+</html>

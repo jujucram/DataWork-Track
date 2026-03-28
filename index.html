@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataWork Track</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="background-shape background-shape-1"></div>
+    <div class="background-shape background-shape-2"></div>
+
+    <div class="app">
+      <section id="authSection" class="auth-card">
+  <div class="hero-badge">DataWork Agency</div>
+  <h1>DataWork Track</h1>
+  <p class="auth-subtitle">
+    Connectez-vous à votre espace pour suivre, modifier et organiser vos commandes clients dans une interface professionnelle.
+  </p>
+
+  <form id="authForm" class="order-form">
+    <div class="form-group">
+      <label for="authEmail">Adresse e-mail</label>
+      <input
+        type="email"
+        id="authEmail"
+        placeholder="Ex: nom@exemple.com"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="authPassword">Mot de passe</label>
+      <input
+        type="password"
+        id="authPassword"
+        placeholder="Votre mot de passe"
+        required
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="primary-btn" id="signInBtn">
+        Se connecter
+      </button>
+      <button type="button" class="secondary-btn" id="signUpBtn">
+        Créer un compte
+      </button>
+    </div>
+    <button type="button" id="forgotPasswordBtn" class="link-btn">
+  Mot de passe oublié ?
+</button>
+  </form>
+
+  <p id="authMessage" class="success-message"></p>
+</section>
+
+      <div id="appSection" class="hidden">
+        <header class="hero">
+          <div class="hero-top">
+            <div>
+              <div class="hero-badge">DataWork Agency</div>
+              <h1>DataWork Track</h1>
+              <p>
+                Gérez vos commandes WhatsApp avec une interface claire, rapide et
+                professionnelle.
+              </p>
+            </div>
+
+            <div class="user-block">
+  <div id="userGreeting"></div>
+
+  <div class="user-actions">
+    <button class="upgradeBtn primary-btn">Passer Pro</button>
+    <button id="logoutBtn" class="secondary-btn">Déconnexion</button>
+  </div>
+</div>
+        </header>
+
+        <section class="stats">
+          <div class="card stat-card">
+            <span>Total commandes</span>
+            <h2 id="totalOrders">0</h2>
+          </div>
+
+          <div class="card stat-card">
+            <span>En attente</span>
+            <h2 id="pendingOrders">0</h2>
+          </div>
+
+          <div class="card stat-card">
+            <span>Livrées</span>
+            <h2 id="deliveredOrders">0</h2>
+          </div>
+
+          <div class="card stat-card">
+            <span>Revenu total</span>
+            <h2 id="totalRevenue">0 FCFA</h2>
+          </div>
+        </section>
+
+        <section class="grid-layout">
+          <div class="card">
+            <div class="section-title">
+              <h3 id="formTitle">Ajouter une commande</h3>
+              <p>Enregistrez ou modifiez une commande client.</p>
+            </div>
+
+            <form id="orderForm" class="order-form">
+              <div class="form-group">
+                <label for="clientName">Nom du client</label>
+                <input
+                  type="text"
+                  id="clientName"
+                  placeholder="Ex: Marie"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="clientPhone">Téléphone(whatsApp)</label>
+                <input
+                  type="text"
+                  id="clientPhone"
+                  placeholder="Ex: 6XXXXXXXX"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="product">Produit</label>
+                <input
+                  type="text"
+                  id="product"
+                  placeholder="Ex: Sac à main"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="price">Prix</label>
+                <input
+                  type="number"
+                  id="price"
+                  placeholder="Ex: 15000"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="primary-btn" id="submitBtn">
+                  Ajouter la commande
+                </button>
+
+                <button
+                  type="button"
+                  class="secondary-btn hidden"
+                  id="cancelEditBtn"
+                >
+                  Annuler la modification
+                </button>
+              </div>
+            </form>
+
+            <p id="successMessage" class="success-message"></p>
+          </div>
+
+          <div class="card">
+            <div class="section-title">
+              <h3>Gestion des commandes</h3>
+              <p>Recherchez, filtrez et exportez les commandes.</p>
+            </div>
+
+            <div class="toolbar">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Rechercher par nom, téléphone ou produit"
+                class="search-input"
+              />
+
+              <select id="filterStatus" class="search-input">
+                <option value="all">Toutes les commandes</option>
+                <option value="En attente">En attente</option>
+                <option value="Livrée">Livrée</option>
+              </select>
+            </div>
+
+            <div class="toolbar toolbar-actions">
+              <button id="exportBtn" class="secondary-btn">
+                Exporter les commandes
+              </button>
+              <button id="clearAllBtn" class="danger-btn">
+                Supprimer toutes les commandes
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">
+            <h3>Liste des commandes</h3>
+            <p>Suivez toutes les opérations enregistrées.</p>
+          </div>
+
+          <div id="ordersList" class="orders-list"></div>
+        </section>
+
+        <footer class="simple-footer">
+  Designed by DataWork Agency
+</footer>
+      </div>
+    </div>
+<div id="upgradeModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Limite atteinte</h2>
+    <p>
+      Vous avez atteint la limite gratuite de 20 commandes.
+      Passez au plan Pro pour continuer à utiliser DataWork Track.
+    </p>
+
+    <button id="upgradeBtn" class="upgrade-btn">
+      Passer au plan Pro
+    </button>
+
+    <button onclick="closeModal()" class="close-btn">
+      Fermer
+    </button>
+  </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - DataWork Track</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="admin-page">
+      <section class="admin-shell">
+        <div class="admin-topbar">
+          <div>
+            <div class="hero-badge">DataWork Agency</div>
+            <h1 class="admin-title">Espace Admin</h1>
+            <p class="admin-subtitle">
+              Vérifiez les preuves de paiement, gérez les demandes en attente et
+              activez les comptes Pro en un clic.
+            </p>
+          </div>
+
+          <div class="admin-actions-top">
+            <span id="adminEmail" class="admin-email"></span>
+            <button id="adminLogoutBtn" class="secondary-btn">Déconnexion</button>
+          </div>
+        </div>
+
+        <section class="card admin-login" id="adminLoginCard">
+          <div class="section-title">
+            <h3>Connexion administrateur</h3>
+            <p>Connectez-vous avec votre compte autorisé.</p>
+          </div>
+
+          <div class="order-form">
+            <div class="form-group">
+              <label for="adminAuthEmail">Adresse e-mail</label>
+              <input
+                type="email"
+                id="adminAuthEmail"
+                placeholder="admin@exemple.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="adminAuthPassword">Mot de passe</label>
+              <input
+                type="password"
+                id="adminAuthPassword"
+                placeholder="Votre mot de passe"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button id="adminLoginBtn" class="primary-btn">
+                Se connecter
+              </button>
+            </div>
+          </div>
+
+          <p id="adminMessage" class="success-message"></p>
+        </section>
+
+        <section id="adminPanel" class="hidden">
+          <div class="admin-stats">
+            <div class="stat-card">
+              <span>Demandes pending</span>
+              <h2 id="pendingRequestsCount">0</h2>
+            </div>
+
+            <div class="stat-card">
+              <span>Comptes Pro</span>
+              <h2 id="proProfilesCount">0</h2>
+            </div>
+          </div>
+
+          <section class="card">
+            <div class="section-title">
+              <h3>Demandes de paiement</h3>
+              <p>
+                Ouvrez la capture, vérifiez la transaction puis activez ou rejetez
+                la demande.
+              </p>
+            </div>
+
+            <div id="adminRequestsList" class="orders-list"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
