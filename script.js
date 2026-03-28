@@ -7,7 +7,7 @@ const signUpBtn = document.getElementById("signUpBtn");
 const authMessage = document.getElementById("authMessage");
 const logoutBtn = document.getElementById("logoutBtn");
 const userGreeting = document.getElementById("userGreeting");
-
+const appLoader = document.getElementById("appLoader");
 const orderForm = document.getElementById("orderForm");
 const ordersList = document.getElementById("ordersList");
 const totalOrders = document.getElementById("totalOrders");
@@ -33,6 +33,30 @@ const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
 let orders = [];
 let editId = null;
 let currentUser = null;
+let appInitialized = false;
+
+async function initializeApp() {
+  const { data, error } = await supabaseClient.auth.getUser();
+
+  if (error) {
+    console.error("Erreur session:", error);
+    showAuth();
+    appInitialized = true;
+    return;
+  }
+
+  if (data.user) {
+    currentUser = data.user;
+    showApp();
+    await loadUserProfile();
+    await loadOrders();
+  } else {
+    currentUser = null;
+    showAuth();
+  }
+
+  appInitialized = true;
+}
 
 if (footerYear) {
   footerYear.textContent = new Date().getFullYear();
@@ -86,14 +110,16 @@ function showMessage(message, isError = false) {
   }, 2200);
 }
 
-function showApp() {
-  authSection.classList.add("hidden");
-  appSection.classList.remove("hidden");
+function showAuth() {
+  authSection.classList.remove("hidden");
+  appSection.classList.add("hidden");
+  appLoader.classList.add("hidden");
 }
 
-function showAuth() {
-  appSection.classList.add("hidden");
-  authSection.classList.remove("hidden");
+function showApp() {
+  appSection.classList.remove("hidden");
+  authSection.classList.add("hidden");
+  appLoader.classList.add("hidden");
 }
 
 function resetFormState() {
@@ -412,24 +438,15 @@ async function signIn() {
   }
 
   currentUser = data.user;
-userGreeting.textContent = "Bonjour " + currentUser.email;
-showApp();
-await loadOrders();
-showAuthMessage("");
+  showApp();
+  await loadUserProfile();
+  await loadOrders();
 }
 
 async function logout() {
-  const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
+  await supabaseClient.auth.signOut();
   currentUser = null;
   orders = [];
-  authEmail.value = "";
-  authPassword.value = "";
   showAuth();
 }
 
@@ -586,7 +603,20 @@ async function checkSession() {
 }
 }
 
-checkSession();
+initializeApp();
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
+  if (!appInitialized) return;
+
+  if (session?.user) {
+    currentUser = session.user;
+    showApp();
+    await loadUserProfile();
+    await loadOrders();
+  } else {
+    currentUser = null;
+    showAuth();
+  }
+});
 function showUpgradeModal() {
   const modal = document.getElementById("upgradeModal");
   modal.classList.remove("hidden");
