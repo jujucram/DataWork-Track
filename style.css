@@ -7,6 +7,26 @@
 #userGreeting {
   margin-bottom: 15px;
 }
+.auth-footer {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.auth-footer a {
+  font-size: 13px;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.auth-footer a:hover {
+  color: #3b82f6;
+}
 
 :root {
   --bg: #f4f7fb;
