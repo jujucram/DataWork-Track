@@ -71,12 +71,12 @@ async function forgotPassword() {
   }
 
   const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + "/reset-password.html",
+    redirectTo: "https://datawork-track.netlify.app/reset-password.html",
   });
 
   if (error) {
-    console.error(error);
-    showAuthMessage("Impossible d'envoyer l'e-mail de réinitialisation.", true);
+    console.error("RESET ERROR:", error);
+    showAuthMessage(error.message, true);
     return;
   }
 
