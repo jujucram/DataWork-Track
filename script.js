@@ -80,7 +80,7 @@ async function forgotPassword() {
     return;
   }
 
-  showAuthMessage("Lien envoyé. Vérifie ton e-mail.");
+  showAuthMessage("Un lien de réinitialisation a été envoyé. Vérifiez votre boîte de réception ou vos spams.");
 }
 if (forgotPasswordBtn) {
   forgotPasswordBtn.addEventListener("click", forgotPassword);
@@ -414,7 +414,7 @@ async function signUp() {
     return;
   }
 
-  showAuthMessage("Compte créé. Connecte-toi maintenant.");
+  showAuthMessage("Compte créé. Veuillez confirmer votre adresse email avant de vous connecter. Vérifiez vos spams.");
 }
 
 async function signIn() {
