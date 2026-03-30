@@ -5,70 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DataWork Track</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="icon-192.png" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="theme-color" content="#1e293b" />
   </head>
   <body>
     <div class="background-shape background-shape-1"></div>
     <div class="background-shape background-shape-2"></div>
+
     <div id="appLoader" class="app-loader">
-  Chargement...
+      Chargement...
     </div>
 
     <div class="app">
       <section id="authSection" class="auth-card">
-  <div class="hero-badge">DataWork Agency</div>
-  <h1>DataWork Track</h1>
-  <p class="auth-subtitle">
-    Connectez-vous à votre espace pour suivre, modifier et organiser vos commandes clients dans une interface professionnelle.
-  </p>
+        <div class="hero-badge">DataWork Agency</div>
+        <h1>DataWork Track</h1>
+        <p class="auth-subtitle">
+          Connectez-vous à votre espace pour suivre, modifier et organiser vos
+          commandes clients dans une interface professionnelle.
+        </p>
 
-  <form id="authForm" class="order-form">
-    <div class="form-group">
-      <label for="authEmail">Adresse e-mail</label>
-      <input
-        type="email"
-        id="authEmail"
-        placeholder="Ex: nom@exemple.com"
-        required
-      />
-    </div>
+        <form id="authForm" class="order-form">
+          <div class="form-group">
+            <label for="authEmail">Adresse e-mail</label>
+            <input
+              type="email"
+              id="authEmail"
+              placeholder="Ex: nom@exemple.com"
+              required
+            />
+          </div>
 
-    <div class="form-group">
-      <label for="authPassword">Mot de passe</label>
-      <input
-        type="password"
-        id="authPassword"
-        placeholder="Votre mot de passe"
-        required
-      />
-    </div>
+          <div class="form-group">
+            <label for="authPassword">Mot de passe</label>
+            <input
+              type="password"
+              id="authPassword"
+              placeholder="Votre mot de passe"
+              required
+            />
+          </div>
 
-    <div class="form-actions">
-      <button type="button" class="primary-btn" id="signInBtn">
-        Se connecter
-      </button>
-      <button type="button" class="secondary-btn" id="signUpBtn">
-        Créer un compte
-      </button>
-    </div>
-    <button type="button" id="forgotPasswordBtn" class="link-btn">
-  Mot de passe oublié ?
-</button>
-  </form>
+          <div class="form-actions">
+            <button type="button" class="primary-btn" id="signInBtn">
+              Se connecter
+            </button>
+            <button type="button" class="secondary-btn" id="signUpBtn">
+              Créer un compte
+            </button>
+          </div>
+
+          <button type="button" id="forgotPasswordBtn" class="link-btn">
+            Mot de passe oublié ?
+          </button>
+        </form>
+
         <div class="auth-footer">
-  <a href="about.html">À propos</a>
-  <a href="privacy.html">Confidentialité</a>
-  <a href="terms.html">Conditions</a>
-  <a href="contact.html">Contact</a>
+          <a href="about.html">À propos</a>
+          <a href="privacy.html">Confidentialité</a>
+          <a href="terms.html">Conditions</a>
+          <a href="contact.html">Contact</a>
         </div>
 
-  <p id="authMessage" class="success-message"></p>
-</section>
+        <p id="authMessage" class="success-message"></p>
+      </section>
 
       <div id="appSection" class="hidden">
         <header class="hero">
@@ -77,20 +84,47 @@
               <div class="hero-badge">DataWork Agency</div>
               <h1>DataWork Track</h1>
               <p>
-                Gérez vos commandes WhatsApp avec une interface claire, rapide et
-                professionnelle.
+                Gérez vos commandes WhatsApp avec une interface claire, rapide
+                et professionnelle.
               </p>
             </div>
 
             <div class="user-block">
-  <div id="userGreeting"></div>
+              <div id="subscriptionAlert" class="subscription-alert hidden"></div>
 
-  <div class="user-actions">
-    <button class="upgradeBtn primary-btn">Passer Pro</button>
-    <button id="logoutBtn" class="secondary-btn">Déconnexion</button>
-  </div>
-</div>
+              <div id="userNotification" class="user-notification hidden">
+                <div
+                  id="userNotificationTitle"
+                  class="user-notification-title"
+                ></div>
+                <div
+                  id="userNotificationMessage"
+                  class="user-notification-message"
+                ></div>
+              </div>
+
+              <div id="userGreeting"></div>
+
+              <div class="user-actions">
+                <button class="upgradeBtn primary-btn">Passer Pro</button>
+                <button id="logoutBtn" class="secondary-btn">
+                  Déconnexion
+                </button>
+              </div>
+            </div>
+          </div>
         </header>
+
+        <div id="installBanner" class="install-banner hidden">
+          <div>
+            <strong>Téléchargez l’application</strong>
+            <p>
+              Pour une expérience plus fluide, ajoutez DataWork Track à votre
+              écran d’accueil.
+            </p>
+          </div>
+          <button id="installAppBtn" class="primary-btn">Installer</button>
+        </div>
 
         <section class="stats">
           <div class="card stat-card">
@@ -151,6 +185,7 @@
                   required
                 />
               </div>
+
               <div class="form-group">
                 <label for="price">Prix</label>
                 <input
@@ -222,29 +257,31 @@
         </section>
 
         <footer class="simple-footer">
-  Designed by DataWork Agency
-</footer>
+          Designed by DataWork Agency
+        </footer>
       </div>
     </div>
-<div id="upgradeModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Limite atteinte</h2>
-    <p>
-      Vous avez atteint la limite gratuite de 20 commandes.
-      Passez au plan Pro pour continuer à utiliser DataWork Track.
-    </p>
 
-    <button id="upgradeBtn" class="upgrade-btn">
-      Passer au plan Pro
-    </button>
+    <div id="upgradeModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Limite atteinte</h2>
+        <p>
+          Vous avez atteint la limite gratuite de 20 commandes. Passez au plan
+          Pro pour continuer à utiliser DataWork Track.
+        </p>
 
-    <button onclick="closeModal()" class="close-btn">
-      Fermer
-    </button>
-  </div>
-</div>
+        <button id="upgradeBtn" class="upgrade-btn">
+          Passer au plan Pro
+        </button>
+
+        <button onclick="closeModal()" class="close-btn">
+          Fermer
+        </button>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
   </body>
-</html>
+  </html>
