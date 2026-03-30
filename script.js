@@ -34,6 +34,58 @@ let orders = [];
 let editId = null;
 let currentUser = null;
 let appInitialized = false;
+let profileChannel = null;
+let deferredPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  const installBanner = document.getElementById("installBanner");
+  if (installBanner) {
+    installBanner.classList.remove("hidden");
+  }
+});
+
+const installAppBtn = document.getElementById("installAppBtn");
+if (installAppBtn) {
+  installAppBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+
+    const installBanner = document.getElementById("installBanner");
+    if (installBanner) {
+      installBanner.classList.add("hidden");
+    }
+  });
+}
+
+function subscribeToProfileChanges() {
+  if (!currentUser) return;
+
+  if (profileChannel) {
+    supabaseClient.removeChannel(profileChannel);
+  }
+
+  profileChannel = supabaseClient
+    .channel("profile-changes-" + currentUser.id)
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "profiles",
+        filter: `id=eq.${currentUser.id}`,
+      },
+      async () => {
+        await loadUserProfile();
+      }
+    )
+    .subscribe();
+}
 
 async function initializeApp() {
   const { data, error } = await supabaseClient.auth.getUser();
@@ -47,6 +99,7 @@ async function initializeApp() {
 
   if (data.user) {
     currentUser = data.user;
+    subscribeToProfileChanges();
     showApp();
     await loadUserProfile();
     await loadOrders();
@@ -284,49 +337,139 @@ async function loadUserProfile() {
 
   const userGreeting = document.getElementById("userGreeting");
   const upgradeBtns = document.querySelectorAll(".upgradeBtn");
+  const subscriptionAlert = document.getElementById("subscriptionAlert");
+  const userNotification = document.getElementById("userNotification");
+  const userNotificationTitle = document.getElementById("userNotificationTitle");
+  const userNotificationMessage = document.getElementById("userNotificationMessage");
+
+  if (subscriptionAlert) {
+    subscriptionAlert.className = "subscription-alert hidden";
+    subscriptionAlert.textContent = "";
+  }
+
+  if (userNotification) {
+    userNotification.className = "user-notification hidden";
+  }
+
+  let isExpired = false;
+  let daysLeft = null;
+
+  if (profile.plan === "pro" && profile.plan_expires_at) {
+    const now = new Date();
+    const expiryDate = new Date(profile.plan_expires_at);
+    const diffMs = expiryDate.getTime() - now.getTime();
+    daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMs <= 0) {
+      isExpired = true;
+
+      await supabaseClient
+        .from("profiles")
+        .update({
+          plan: "free",
+          order_limit: 20,
+          payment_status: "none",
+          notification_title: "Abonnement expiré",
+          notification_message: "Votre abonnement Pro a expiré. Veuillez renouveler pour continuer.",
+          notification_type: "expired",
+          notification_read: false,
+        })
+        .eq("id", currentUser.id);
+
+      profile.plan = "free";
+      profile.order_limit = 20;
+      profile.payment_status = "none";
+    }
+  }
 
   if (profile.plan === "pro") {
-    userGreeting.innerHTML =` 
-  <div style="display:flex; flex-direction:column; gap:10px;">
+    const expiryText = profile.plan_expires_at
+      ? `<div style="font-size:12px; color:#64748b; margin-top:4px;">
+           Expire le ${new Date(profile.plan_expires_at).toLocaleDateString("fr-FR")}
+         </div>`
+      : "";
 
-    <div>
-      <i class="fa-solid fa-user"></i> ${currentUser.email}
-      <span style="color:#f59e0b; font-weight:700; margin-left:8px;">
-        <i class="fa-solid fa-crown"></i> PRO
-      </span>
-    </div>
+    userGreeting.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <i class="fa-solid fa-user"></i> ${currentUser.email}
+          <span style="color:#f59e0b; font-weight:700; margin-left:8px;">
+            <i class="fa-solid fa-crown"></i> PRO
+          </span>
+        </div>
 
-    <div style="
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#16a34a20;
-      color:#16a34a;
-      padding:6px 12px;
-      border-radius:999px;
-      font-size:13px;
-      width:fit-content;
-    ">
-      <i class="fa-solid fa-circle-check"></i>
-      Abonnement actif
-    </div>
+        <div style="
+          display:inline-flex;
+          align-items:center;
+          gap:6px;
+          background:rgba(34,197,94,0.12);
+          color:#16a34a;
+          padding:6px 12px;
+          border-radius:999px;
+          font-size:13px;
+          width:fit-content;
+        ">
+          <i class="fa-solid fa-circle-check"></i>
+          Abonnement actif
+        </div>
 
-  </div>
-`;
+        ${expiryText}
+      </div>
+    `;
 
     upgradeBtns.forEach((btn) => {
       btn.style.display = "none";
     });
+
+    if (subscriptionAlert && daysLeft !== null && daysLeft <= 7 && daysLeft > 0) {
+      subscriptionAlert.textContent =
+        `Votre abonnement Pro expire bientôt. Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""}.`;
+      subscriptionAlert.className = "subscription-alert warning";
+
+      if (!profile.notification_read) {
+        // on laisse la notification admin prioritaire si elle existe
+      } else {
+        await supabaseClient
+          .from("profiles")
+          .update({
+            notification_title: "Abonnement bientôt expiré",
+            notification_message: `Votre abonnement Pro expire dans ${daysLeft} jour${daysLeft > 1 ? "s" : ""}.`,
+            notification_type: "warning",
+            notification_read: false,
+          })
+          .eq("id", currentUser.id);
+      }
+    }
   } else {
-    userGreeting.innerHTML =` 
+    userGreeting.innerHTML = `
       <i class="fa-solid fa-user"></i> ${currentUser.email}
     `;
 
     upgradeBtns.forEach((btn) => {
       btn.style.display = "inline-block";
     });
+
+    if (subscriptionAlert && isExpired) {
+      subscriptionAlert.textContent =
+        "Votre abonnement Pro a expiré. Votre compte est repassé au plan gratuit.";
+      subscriptionAlert.className = "subscription-alert expired";
+    }
+  }
+
+  if (profile.notification_title && profile.notification_message && !profile.notification_read && userNotification) {
+    userNotificationTitle.textContent = profile.notification_title;
+    userNotificationMessage.textContent = profile.notification_message;
+    userNotification.className = `user-notification ${profile.notification_type || "info"}`;
+
+    setTimeout(async () => {
+      await supabaseClient
+        .from("profiles")
+        .update({ notification_read: true })
+        .eq("id", currentUser.id);
+    }, 4000);
   }
 }
+
 
 async function toggleStatus(id, currentStatus) {
   const newStatus = currentStatus === "En attente" ? "Livrée" : "En attente";
@@ -376,22 +519,60 @@ function openWhatsApp(phone) {
   window.open("https://wa.me/" + fullPhone, "_blank");
 }
 
-function exportOrders() {
+async function exportOrders() {
   if (orders.length === 0) {
     showMessage("Aucune commande à exporter.");
     return;
   }
 
-  const dataStr = JSON.stringify(orders, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
-  link.href = url;
-  link.download = "datawork-orders.json";
-  link.click();
-  URL.revokeObjectURL(url);
-  showMessage("Export effectué.");
+  let y = 10;
+
+  // Titre
+  doc.setFontSize(16);
+  doc.text("DataWork Track - Commandes", 10, y);
+  y += 10;
+
+  doc.setFontSize(10);
+  doc.text(`Date : ${new Date().toLocaleDateString("fr-FR")}`, 10, y);
+  y += 10;
+
+  // Liste des commandes
+  orders.forEach((order, index) => {
+    if (y > 270) {
+      doc.addPage();
+      y = 10;
+    }
+
+    doc.setFontSize(11);
+    doc.text(`Commande ${index + 1}`, 10, y);
+    y += 6;
+
+    doc.setFontSize(10);
+    doc.text(`Client : ${order.client_name}`, 10, y);
+    y += 5;
+
+    doc.text(`Téléphone : ${order.client_phone}`, 10, y);
+    y += 5;
+
+    doc.text(`Produit : ${order.product}`, 10, y);
+    y += 5;
+
+    doc.text(`Prix : ${order.price} FCFA`, 10, y);
+    y += 5;
+
+    doc.text(`Statut : ${order.status}`, 10, y);
+    y += 5;
+
+    doc.text(`Date : ${order.order_date || "Non définie"}`, 10, y);
+    y += 8;
+  });
+
+  doc.save("datawork-orders.pdf");
+
+  showMessage("Export PDF réussi.");
 }
 
 async function signUp() {
@@ -609,6 +790,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 
   if (session?.user) {
     currentUser = session.user;
+    subscribeToProfileChanges();
     showApp();
     await loadUserProfile();
     await loadOrders();
