@@ -130,6 +130,7 @@ function renderRequests() {
 async function activatePro(requestId, userId, email) {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30);
+
   const { error: profileError } = await supabaseClient
     .from("profiles")
     .update({
@@ -137,6 +138,10 @@ async function activatePro(requestId, userId, email) {
       order_limit: 999999,
       payment_status: "paid",
       plan_expires_at: expiresAt.toISOString(),
+      notification_title: "Abonnement Pro activé",
+      notification_message: "Votre abonnement Pro a été activé avec succès pour 30 jours.",
+      notification_type: "success",
+      notification_read: false,
     })
     .eq("id", userId);
 
@@ -146,14 +151,10 @@ async function activatePro(requestId, userId, email) {
     return;
   }
 
-  const { error: requestError } = await supabaseClient
+  await supabaseClient
     .from("payment_requests")
     .update({ status: "approved" })
     .eq("id", requestId);
-
-  if (requestError) {
-    console.error(requestError);
-  }
 
   showAdminMessage(`Compte Pro activé pour ${email}.`);
   await loadPaymentRequests();
